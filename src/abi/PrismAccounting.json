@@ -117,6 +117,19 @@
     "anonymous": false,
     "inputs": [
       {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "refunds",
+        "type": "uint256"
+      }
+    ],
+    "name": "BatchRefundEvent",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
         "indexed": true,
         "internalType": "address",
         "name": "funder",
@@ -144,7 +157,7 @@
       {
         "indexed": true,
         "internalType": "address",
-        "name": "funder",
+        "name": "advertiser",
         "type": "address"
       },
       {
@@ -167,16 +180,16 @@
     "anonymous": false,
     "inputs": [
       {
-        "indexed": true,
-        "internalType": "address",
-        "name": "funder",
-        "type": "address"
-      },
-      {
         "indexed": false,
         "internalType": "bytes32",
-        "name": "identifier",
+        "name": "id",
         "type": "bytes32"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "advertiser",
+        "type": "address"
       },
       {
         "indexed": false,
@@ -192,15 +205,40 @@
     "anonymous": false,
     "inputs": [
       {
+        "indexed": false,
+        "internalType": "bytes32",
+        "name": "id",
+        "type": "bytes32"
+      },
+      {
         "indexed": true,
         "internalType": "address",
-        "name": "funder",
+        "name": "advertiser",
         "type": "address"
       },
       {
         "indexed": true,
         "internalType": "address",
-        "name": "recipient",
+        "name": "publisher",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "CampaignDebited",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "advertiser",
         "type": "address"
       },
       {
@@ -216,7 +254,26 @@
         "type": "uint256"
       }
     ],
-    "name": "CampaignDebited",
+    "name": "CampaignToppedUp",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "refunds",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "totalWithdrawal",
+        "type": "uint256"
+      }
+    ],
+    "name": "EmergencyCancelPendingPayments",
     "type": "event"
   },
   {
@@ -397,6 +454,31 @@
     "type": "event"
   },
   {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "withdrawRefundEvent",
+    "type": "event"
+  },
+  {
     "stateMutability": "payable",
     "type": "fallback"
   },
@@ -486,6 +568,66 @@
   {
     "inputs": [
       {
+        "components": [
+          {
+            "internalType": "bytes32",
+            "name": "id",
+            "type": "bytes32"
+          },
+          {
+            "internalType": "address",
+            "name": "advertiser",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "publisher",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "settlementPrice",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct PrismAccounting.Auction[]",
+        "name": "_settlements",
+        "type": "tuple[]"
+      }
+    ],
+    "name": "batchAuctionSettlement",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "components": [
+          {
+            "internalType": "bytes32",
+            "name": "id",
+            "type": "bytes32"
+          },
+          {
+            "internalType": "address",
+            "name": "advertiser",
+            "type": "address"
+          }
+        ],
+        "internalType": "struct PrismAccounting.Refund[]",
+        "name": "refunds",
+        "type": "tuple[]"
+      }
+    ],
+    "name": "batchRefund",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "address",
         "name": "owner",
         "type": "address"
@@ -507,22 +649,14 @@
         "internalType": "uint256",
         "name": "budget",
         "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "refund",
+        "type": "uint256"
       }
     ],
     "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "bytes32",
-        "name": "identifier",
-        "type": "bytes32"
-      }
-    ],
-    "name": "cancelCampaign",
-    "outputs": [],
-    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
@@ -541,34 +675,6 @@
   {
     "inputs": [],
     "name": "claimPublishersBalance",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "funder",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "publisher",
-        "type": "address"
-      },
-      {
-        "internalType": "bytes32",
-        "name": "identifier",
-        "type": "bytes32"
-      },
-      {
-        "internalType": "uint256",
-        "name": "amount",
-        "type": "uint256"
-      }
-    ],
-    "name": "debitCampaign",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -810,6 +916,29 @@
     "inputs": [
       {
         "internalType": "address",
+        "name": "advertiser",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "identifier",
+        "type": "bytes32"
+      }
+    ],
+    "name": "topUpCampaign",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
         "name": "newOwner",
         "type": "address"
       }
@@ -835,6 +964,19 @@
       }
     ],
     "name": "updatePublisherSharePercent",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "campaignId",
+        "type": "bytes32"
+      }
+    ],
+    "name": "withdrawRefund",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
